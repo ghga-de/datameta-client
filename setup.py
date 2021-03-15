@@ -39,6 +39,8 @@ setup(
     },
     install_requires=[
         'typer',
+        'datameta-client-lib==0.0.1',
+        'pyyaml',
     ],
     classifiers=[
         'Development Status :: 2 - Pre-Alpha  ',
