@@ -13,3 +13,7 @@
 # limitations under the License.
 
 __version__ = "0.0.1"
+
+# the major version of the API the server which the client is talking to
+# should always match the version of the client, thus:
+api_version = "v" + __version__.split(".")[0]

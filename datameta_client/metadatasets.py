@@ -18,6 +18,8 @@ import json
 import hashlib
 import requests
 from pprint import pprint
+from typing import Optional
+
 from datameta_client_lib import ApiClient, ApiException
 from datameta_client_lib.api import files_api, metadata_api
 from datameta_client_lib.model.meta_data_set import MetaDataSet
@@ -25,11 +27,19 @@ from datameta_client_lib.model.file_announcement import FileAnnouncement
 from datameta_client_lib.model.file_upload_response import FileUploadResponse
 from datameta_client_lib.model.file_update_request import FileUpdateRequest
 
+from .config import get_config
+
 app = typer.Typer()
 
 
 @app.command()
-def addmeta(metadata: str):
+def add(
+    metadata: str,
+    url:Optional[str] = None, 
+    token:Optional[str] = None,
+):
+    config = get_config(url, token)
+
     with ApiClient(app_config) as api_client:
         api_instance = metadata_api.MetadataApi(api_client)
         meta_data_set = MetaDataSet(record=json.loads(metadata))

@@ -13,26 +13,27 @@
 # limitations under the License.
 
 import typer
+import yaml
 from pathlib import Path
 from typing import Optional
 
 from .files import app as files_app
 from .metadatasets import app as metadatasets_app
+from .config import set_global_config
+
 
 app = typer.Typer()
 app.add_typer(files_app, name="files")
 app.add_typer(metadatasets_app, name="metadatasets")
 
-config = { 
-    # global default config parameters
-    # e.g. set by the CLI when prociding a config file
-    "url": None,
-    "token": None
-}
 
 @app.callback()
 def main(config:Optional[Path] = typer.Option(None)):
-    pass
+    """Provide config via YAML file"""
+    if config:
+        with open(config, "r") as cfile:
+            set_global_config(yaml.safe_load(cfile))
+        
 
 if __name__ == "__main__":
     app()

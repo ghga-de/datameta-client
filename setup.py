@@ -43,6 +43,12 @@ setup(
         'pyyaml',
         'requests',
     ],
+    extras_require={
+        'testing': [
+            'pytest',
+            'pytest-cov'
+        ],
+    },
     classifiers=[
         'Development Status :: 2 - Pre-Alpha  ',
         'Intended Audience :: Developers',

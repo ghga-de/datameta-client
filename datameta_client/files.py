@@ -18,18 +18,29 @@ import json
 import hashlib
 import requests
 from pprint import pprint
-# from datameta_client_lib import ApiClient, ApiException
-# from datameta_client_lib.api import files_api, metadata_api
-# from datameta_client_lib.model.meta_data_set import MetaDataSet
-# from datameta_client_lib.model.file_announcement import FileAnnouncement
-# from datameta_client_lib.model.file_upload_response import FileUploadResponse
-# from datameta_client_lib.model.file_update_request import FileUpdateRequest
+from typing import Optional
+
+from datameta_client_lib import ApiClient, ApiException
+from datameta_client_lib.api import files_api, metadata_api
+from datameta_client_lib.model.meta_data_set import MetaDataSet
+from datameta_client_lib.model.file_announcement import FileAnnouncement
+from datameta_client_lib.model.file_upload_response import FileUploadResponse
+from datameta_client_lib.model.file_update_request import FileUpdateRequest
+
+from .config import get_config
 
 app = typer.Typer()
 
 
 @app.command()
-def addfile(name:str, path: str):
+def add(
+    name:str, 
+    path: str, 
+    url:Optional[str] = None, 
+    token:Optional[str] = None
+):
+    config = get_config()
+
     # Compute the checksum of the provided file
     with open(path, 'rb') as infile:
         md5 = hashlib.md5(infile.read()).hexdigest()
@@ -37,7 +48,7 @@ def addfile(name:str, path: str):
     # [API CALL 1]
     # Announce the file to the API. The announcement provides the filename and
     # the checksum of the file data.
-    with ApiClient(app_config) as api_client:
+    with ApiClient(config) as api_client:
         api_instance = files_api.FilesApi(api_client)
         file_announcement = FileAnnouncement(
             name=name,
@@ -58,7 +69,7 @@ def addfile(name:str, path: str):
         api_response_upload = requests.post(
                 api_response_announce['url_to_upload'],
                 # [!!] TODO THIS IS TO BE REMOVED!
-                headers={'Authorization' : 'Bearer ' + app_config.access_token, **api_response_announce.request_headers },
+                headers={'Authorization' : 'Bearer ' + config.access_token, **api_response_announce.request_headers },
                 files = { 'file' : infile } )
         try:
             api_response_upload.raise_for_status()
@@ -71,7 +82,7 @@ def addfile(name:str, path: str):
     # [API CALL 3]
     # Inform the backend that the file was uploaded
     print("Informing the backend that the file upload was performed...", end="")
-    with ApiClient(app_config) as api_client:
+    with ApiClient(config) as api_client:
         api_instance = files_api.FilesApi(api_client)
         # Use the file ID as received in the announcement response
         id = api_response_announce['id']['uuid']
