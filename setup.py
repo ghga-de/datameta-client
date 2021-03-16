@@ -41,6 +41,7 @@ setup(
         'typer',
         'datameta-client-lib==0.0.1',
         'pyyaml',
+        'requests',
     ],
     classifiers=[
         'Development Status :: 2 - Pre-Alpha  ',
