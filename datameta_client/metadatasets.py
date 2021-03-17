@@ -34,15 +34,15 @@ app = typer.Typer()
 
 @app.command()
 def add(
-    metadata: str,
+    metadata_json: str,
     url:Optional[str] = None, 
     token:Optional[str] = None,
 ):
     config = get_config(url, token)
 
-    with ApiClient(app_config) as api_client:
+    with ApiClient(config) as api_client:
         api_instance = metadata_api.MetadataApi(api_client)
-        meta_data_set = MetaDataSet(record=json.loads(metadata))
+        meta_data_set = MetaDataSet(record=json.loads(metadata_json))
         try:
             api_response = api_instance.create_meta_data_set(meta_data_set=meta_data_set)
             pprint(api_response)

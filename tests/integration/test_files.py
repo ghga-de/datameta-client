@@ -8,7 +8,7 @@ import os
 from datameta_client import files
 
 # test fixtures:
-file_name = "test_file.txt"
+file_name = "test_file_1.txt"
 file_path = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
     "fixtures",
