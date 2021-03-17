@@ -39,10 +39,10 @@ def add(
     info("Parsing metadata record", quiet)
     metadata_record = get_dict_from(metadata_json)
 
+    info("Sending metadata to server", quiet)
     with ApiClient(config) as api_client:
         api_instance = metadata_api.MetadataApi(api_client)
         meta_data_set = MetaDataSet(record=metadata_record)
-        info("Sending metadata to server", quiet)
         api_response = api_instance.create_meta_data_set(
             meta_data_set=meta_data_set
         )

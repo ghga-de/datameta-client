@@ -55,6 +55,11 @@ def success(message:str, quiet=False):
     print_message(message, "success", GREEN, quiet)
 
 
+def error(message:str, quiet=False):
+    """Print an error message."""
+    print_message(message, "error", RED, quiet)
+
+
 def result(
     result_obj:Any, # a response obj from the
                     # datameta_client_lib
