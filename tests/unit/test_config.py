@@ -5,7 +5,7 @@ from datameta_client import api_version
 # test fixtures:
 url = "http://test.test"
 api_url = f"{url}/api/{api_version}"
-token = "test"
+token = os.getenv("DATAMETA_TOKEN")
 
 
 def test_config_from_env():
