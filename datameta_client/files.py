@@ -28,7 +28,7 @@ from datameta_client_lib.model.file_upload_response import FileUploadResponse
 from datameta_client_lib.model.file_update_request import FileUpdateRequest
 
 from .config import get_config
-from .printing import info, success
+from .printing import info, success, result
 
 app = typer.Typer()
 
@@ -88,3 +88,4 @@ def add(
         api_response = api_instance.update_file(id, file_update_request=file_update_request)
 
     success(f"File \"{name}\" was successfully added.", quiet)
+    result(api_response, quiet)

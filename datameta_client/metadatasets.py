@@ -29,7 +29,7 @@ from datameta_client_lib.model.file_update_request import FileUpdateRequest
 
 from .config import get_config
 from .utils import get_dict_from
-from .printing import info, success
+from .printing import info, success, result
 
 app = typer.Typer()
 
@@ -56,4 +56,4 @@ def add(
         )
         
     success("Metadata record successfully added.")
-    
+    return result(api_response, quiet)

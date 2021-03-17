@@ -14,8 +14,10 @@
 
 """Module containing methods to print to the user"""
 
+import json
 from typer import style, echo
-from typer.colors import BLUE, GREEN, YELLOW, RED 
+from typer.colors import BLUE, GREEN, YELLOW, RED, MAGENTA
+from typing import Union, Any
 
 def print_message(message:str, prefix:str, color:str, quiet=False):
     """Base function to be used by the other print functions
@@ -38,16 +40,40 @@ def print_message(message:str, prefix:str, color:str, quiet=False):
 
 def info(message:str, quiet=False):
     """Print an info of the progress of the action."""
-    print_message(message, "info", BLUE, quiet)
+    print_message(message, "info", YELLOW, quiet)
 
 
 def warning(message:str, quiet=False):
     """Print a warning. This means that there might
     be something the user needs to be aware of,
     however, the action can still be continued."""
-    print_message(message, "warning", YELLOW, quiet)
+    print_message(message, "warning", MAGENTA, quiet)
 
 
 def success(message:str, quiet=False):
     """Print a message indicating the final success of an action"""
     print_message(message, "success", GREEN, quiet)
+
+
+def result(
+    result_obj:Any, # a response obj from the
+                    # datameta_client_lib
+    quiet:bool=False
+):
+    """Prints response obj procuded using the datameta_client_lib
+    to stdout and returns its content."""
+    if not quiet:
+        styled_prefix = style(
+            "[result]:",
+            fg=BLUE,
+            bold=True
+        )
+        echo(styled_prefix, err=True)
+
+        styled_result = style(
+            result_obj.to_str(),
+            fg=BLUE
+        )
+        echo(styled_result, err=False)
+    
+    return result_obj.to_dict()
