@@ -18,7 +18,8 @@ from typer import style, echo
 from typer.colors import BLUE, GREEN, YELLOW, RED 
 
 def print_message(message:str, prefix:str, color:str, quiet=False):
-    """Base function to be used by the other print functions"""
+    """Base function to be used by the other print functions
+    to print to stderr."""
     if not quiet:
         styled_prefix = style(
             f"[{prefix}]: ",
@@ -32,7 +33,7 @@ def print_message(message:str, prefix:str, color:str, quiet=False):
             bold=False
         )
 
-        echo(styled_prefix + styled_message)
+        echo(styled_prefix + styled_message, err=True)
 
 
 def info(message:str, quiet=False):
