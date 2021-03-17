@@ -2,3 +2,6 @@
 
 class ConfigError(RuntimeError):
     pass
+
+class JsonObjectError(RuntimeError):
+    pass

@@ -28,26 +28,32 @@ from datameta_client_lib.model.file_upload_response import FileUploadResponse
 from datameta_client_lib.model.file_update_request import FileUpdateRequest
 
 from .config import get_config
+from .utils import get_dict_from
+from .printing import info, success
 
 app = typer.Typer()
 
 
 @app.command()
 def add(
-    metadata_json: str,
+    metadata_json, # dict or str 
+                   # (Union type not yet supported by typer)
     url:Optional[str] = None, 
     token:Optional[str] = None,
+    quiet:bool = False,
 ):
     config = get_config(url, token)
+    
+    info("Parsing metadata record", quiet)
+    metadata_record = get_dict_from(metadata_json)
 
     with ApiClient(config) as api_client:
         api_instance = metadata_api.MetadataApi(api_client)
-        meta_data_set = MetaDataSet(record=json.loads(metadata_json))
-        try:
-            api_response = api_instance.create_meta_data_set(meta_data_set=meta_data_set)
-            pprint(api_response)
-            print("\nMetadataset successfully uploaded")
-        except ApiException as e:
-            pprint(json.loads(e.body))
-            print("\nMetadataset uploaded failed")
-            sys.exit(1)
+        meta_data_set = MetaDataSet(record=metadata_record)
+        info("Sending metadata to server", quiet)
+        api_response = api_instance.create_meta_data_set(
+            meta_data_set=meta_data_set
+        )
+        
+    success("Metadata record successfully added.")
+    

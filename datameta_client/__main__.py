@@ -14,7 +14,6 @@
 
 import typer
 import yaml
-from pathlib import Path
 from typing import Optional
 
 from .files import app as files_app
@@ -28,7 +27,7 @@ app.add_typer(metadatasets_app, name="metadatasets")
 
 
 @app.callback()
-def main(config:Optional[Path] = typer.Option(None)):
+def main(config:str = typer.Option(None)):
     """Provide config via YAML file"""
     if config:
         with open(config, "r") as cfile:

@@ -14,7 +14,6 @@
 
 import os
 import yaml
-from pathlib import Path
 from typing import Optional
 from urllib.parse import urljoin
 
@@ -66,7 +65,7 @@ def get_config_param(
 def get_config(
     url:Optional[str] = None,
     token:Optional[str] = None, 
-    config_file:Optional[Path] = None,
+    config_file:Optional[str] = None,
 ):
     """Generate configuration class used by datameta_client_lib.
     Configuration parameters can be supplied by (highest priority first):

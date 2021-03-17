@@ -28,16 +28,21 @@ from datameta_client_lib.model.file_upload_response import FileUploadResponse
 from datameta_client_lib.model.file_update_request import FileUpdateRequest
 
 from .config import get_config
+from .printing import info, success
 
 app = typer.Typer()
 
+@app.command()
+def test():
+    pass
 
 @app.command()
 def add(
     name:str, 
     path: str, 
     url:Optional[str] = None, 
-    token:Optional[str] = None
+    token:Optional[str] = None,
+    quiet:bool = False,
 ):
     config = get_config()
 
@@ -54,34 +59,24 @@ def add(
             name=name,
             checksum=md5,
         )
-        print("Announcing file")
-        try:
-            api_response_announce = api_instance.create_file(file_announcement=file_announcement)
-        except ApiException as e:
-            print("Exception when calling FilesApi->create_file: %s\n" % e)
-            sys.exit(1)
+        info("Announcing file", quiet)
+        api_response_announce = api_instance.create_file(file_announcement=file_announcement)
 
     # [API CALL 2][NOT PART OF THE REST API]
     # Make a multipart/form-data POST upload to the location received in the
     # announcement response
-    print("Uploading data...", end = "")
+    info("Uploading data...", quiet)
     with open(path, 'rb') as infile:
         api_response_upload = requests.post(
                 api_response_announce['url_to_upload'],
                 # [!!] TODO THIS IS TO BE REMOVED!
                 headers={'Authorization' : 'Bearer ' + config.access_token, **api_response_announce.request_headers },
                 files = { 'file' : infile } )
-        try:
-            api_response_upload.raise_for_status()
-        except requests.exceptions.HTTPError as err:
-            print("\nThe file upload failed.\n")
-            pprint(err)
-            sys.exit(1)
-    print(" Done.")
-
+        api_response_upload.raise_for_status()
+    info("Upload completed", quiet)
+    
     # [API CALL 3]
-    # Inform the backend that the file was uploaded
-    print("Informing the backend that the file upload was performed...", end="")
+    info("Informing the backend that the file upload was performed", quiet)
     with ApiClient(config) as api_client:
         api_instance = files_api.FilesApi(api_client)
         # Use the file ID as received in the announcement response
@@ -90,16 +85,6 @@ def add(
         file_update_request = FileUpdateRequest(
             content_uploaded=True,
         )
-        try:
-            api_response = api_instance.update_file(id, file_update_request=file_update_request)
-            print(" Done.")
-        except ApiException as e:
-            if e.status == requests.codes['bad_request']:
-                print("\nThe file update failed: The request was malformed.")
-            elif e.status == requests.codes['not_found']:
-                print("\nThe file update failed: The upload URL is invalid")
-            elif e.status == requests.codes['forbidden']:
-                print("\nThe file update failed: Forbidden")
-            elif e.status == requests.codes['conflict']:
-                print("\nThe file update failed: Checksum mismatch")
-            sys.exit(1)
+        api_response = api_instance.update_file(id, file_update_request=file_update_request)
+
+    success(f"File \"{name}\" was successfully added.", quiet)
