@@ -12,20 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import sys
 import typer
-import json
-import hashlib
-import requests
-from pprint import pprint
 from typing import Optional
 
-from datameta_client_lib import ApiClient, ApiException
-from datameta_client_lib.api import files_api, metadata_api
+from datameta_client_lib import ApiClient
+from datameta_client_lib.api import metadata_api
 from datameta_client_lib.model.meta_data_set import MetaDataSet
-from datameta_client_lib.model.file_announcement import FileAnnouncement
-from datameta_client_lib.model.file_upload_response import FileUploadResponse
-from datameta_client_lib.model.file_update_request import FileUpdateRequest
 
 from .config import get_config
 from .utils import get_dict_from
@@ -41,7 +33,7 @@ def add(
     url:Optional[str] = None, 
     token:Optional[str] = None,
     quiet:bool = False,
-):
+) -> dict:
     config = get_config(url, token)
     
     info("Parsing metadata record", quiet)

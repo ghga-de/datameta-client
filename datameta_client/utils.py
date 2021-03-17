@@ -20,7 +20,7 @@ from .errors import JsonObjectError
 
 JSON=Union[dict, str]
 
-def get_dict_from(obj:JSON):
+def get_dict_from(obj:JSON) -> dict:
     """Accepts a dict or a str which can either be a json representation
     or the path to a json file. The function tries parse the information
     and return a dict."""

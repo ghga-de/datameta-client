@@ -59,7 +59,7 @@ def result(
     result_obj:Any, # a response obj from the
                     # datameta_client_lib
     quiet:bool=False
-):
+) -> Union[dict, list]:
     """Prints response obj procuded using the datameta_client_lib
     to stdout and returns its content."""
     if not quiet:
