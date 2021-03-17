@@ -13,39 +13,90 @@ services:
       
     # Overrides default command so things don't shut down after the process ends.
     command: /bin/sh -c "while sleep 1000; do :; done"
-    
-  datameta-app:
-    image: "datameta/datameta:dev"
+
     environment:
+      DATAMETA_URL: http://datameta-app:8080
       SQLALCHEMY_URL: postgresql://datameta:datameta@datameta-postgresql/datameta
-      SQLALCHEMY_TEST_URL: postgresql://datameta:datameta@datameta-postgresql/test
-      SESSION_URL: datameta-memcached:11211
-      SESSION_KEY: datameta
-      SESSION_SECRET: "test"
-      DATAMETA_STORAGE_PATH: /var/datameta/storage
-      DATAMETA_DEMO_MODE: "false"
       DATAMETA_INITIAL_FULLNAME: "admin"
       DATAMETA_INITIAL_EMAIL: "admin@admin.admin"
       DATAMETA_INITIAL_PASS: "admin"
       DATAMETA_INITIAL_GROUPNAME: "admin"
+
+  datameta-app:
+    build:
+      context: .
+      dockerfile: ./Dockerfile_datameta
+
+    environment:
+      SQLALCHEMY_URL: postgresql://datameta:datameta@datameta-postgresql/datameta
+      SESSION_URL: datameta-memcached:11211
+      SESSION_KEY: datameta
+      SESSION_SECRET: "test" # TODO: Insert 64 character random string here
+      DATAMETA_STORAGE_PATH: /var/datameta/storage
+
+      # The initial values can be changed once the DataMeta instance was
+      # deployed.
+      DATAMETA_INITIAL_FULLNAME: "admin"
+      DATAMETA_INITIAL_EMAIL: "admin@admin.admin"
+      DATAMETA_INITIAL_PASS: "admin"
+      DATAMETA_INITIAL_GROUPNAME: "admin"
+
       WAITRESS_MAX_REQUEST_BODY_SIZE: 10737418240 # 10 GB
       WAITRESS_LISTEN: "*:8080"
       WAITRESS_URL_SCHEME:
       WAITRESS_TRUSTED_PROXY_HEADERS:
       WAITRESS_TRUSTED_PROXY:
+
+      # In Demo Mode DataMeta will discard all uploaded files after checksum
+      # comparison. They are recorded in the database as if their contents had
+      # been written to the storage backend, but no storage is actually used.
+      DATAMETA_DEMO_MODE: "false"
+
+      # DataMeta sends out emails for password forgot tokens, registration
+      # confirmations and to notify admins about new registrations. Configure
+      # an SMTP server for outgoing email below.
+      DATAMETA_SMTP_HOST: # TODO: Insert SMTP server address here
+      DATAMETA_SMTP_PORT: 587 # Adjust if needed
+      DATAMETA_SMTP_USER: # TODO: Insert SMTP user here
+      DATAMETA_SMTP_PASS: # TODO: Insert SMTP password here
+      DATAMETA_SMTP_TLS: "true"
+      DATAMETA_SMTP_FROM: # TODO: Specify SMTP FROM header here, format 'Example Support <support@example.com>'
+
+      # Site ID prefixes and lengths
+      # The entites 'user', 'group', 'submission', 'metadataset' and 'file' are
+      # annotated with more human readable IDs in addition to their UUIDs. The
+      # human readable IDs (aka site IDs) are built based on a random sequence
+      # of N digits and an arbitrary prefix. You can adjust these to your
+      # likings below. They should be specific to the site running datameta.
+      DATAMETA_SITE_ID_DIGITS_USERS: 8
+      DATAMETA_SITE_ID_DIGITS_GROUPS: 8
+      DATAMETA_SITE_ID_DIGITS_SUBMISSIONS: 8
+      DATAMETA_SITE_ID_DIGITS_METADATASETS: 8
+      DATAMETA_SITE_ID_DIGITS_FILES: 8
+      DATAMETA_SITE_ID_PREFIX_USERS: "DMU-"
+      DATAMETA_SITE_ID_PREFIX_GROUPS: "DMG-"
+      DATAMETA_SITE_ID_PREFIX_SUBMISSIONS: "DMS-"
+      DATAMETA_SITE_ID_PREFIX_METADATASETS: "DMR-"
+      DATAMETA_SITE_ID_PREFIX_FILES: "DMF-"   
+
+    command: ['sh', '-c', 'dev_install && dev_launcher']
+
     volumes:
       - type: volume
         source: datameta-filestorage
         target: /var/datameta/storage
         volume:
           nocopy: true
+    deploy:
+      endpoint_mode : dnsrr
     ports:
       - target: 8080
         published: 8080
         protocol: tcp
         mode: host
-    deploy:
-      endpoint_mode : dnsrr
+    depends_on:
+      - datameta-memcached
+      - datameta-postgresql
 
   datameta-memcached:
     image: "memcached:1.6.3"

@@ -16,6 +16,8 @@ import os
 import yaml
 from pathlib import Path
 from typing import Optional
+from urllib.parse import urljoin
+
 import datameta_client_lib
 
 from . import api_version
@@ -91,5 +93,5 @@ def get_config(
     # return configuration for datameta_client_lib
     return datameta_client_lib.Configuration(
         access_token = token,
-        host = f"{url}/api/{api_version}"
+        host = urljoin(url, f"/api/{api_version}")
     )

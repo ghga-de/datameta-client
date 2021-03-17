@@ -1,0 +1,10 @@
+# Please source this script from bash like this:
+# `source /workspace/.devcontainer/dev_install`
+
+cd /workspace
+
+# install datameta client in edit mode 
+# with testing dependencies:
+pip install -e ".[testing]"
+
+export DATAMETA_TOKEN=$(python3 ./.devcontainer/init_token.py)
