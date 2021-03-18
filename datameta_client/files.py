@@ -28,10 +28,6 @@ from .printing import info, success, result
 app = typer.Typer()
 
 @app.command()
-def test():
-    pass
-
-@app.command()
 def add(
     name:str, 
     path: str, 
@@ -83,4 +79,4 @@ def add(
         api_response = api_instance.update_file(id, file_update_request=file_update_request)
 
     success(f"File \"{name}\" was successfully added.", quiet)
-    result(api_response, quiet)
+    return result(api_response, quiet)
