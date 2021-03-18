@@ -41,7 +41,14 @@ setup(
         'typer',
         'datameta-client-lib==0.0.1',
         'pyyaml',
+        'requests',
     ],
+    extras_require={
+        'testing': [
+            'pytest',
+            'pytest-cov'
+        ],
+    },
     classifiers=[
         'Development Status :: 2 - Pre-Alpha  ',
         'Intended Audience :: Developers',

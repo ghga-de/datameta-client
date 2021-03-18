@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # Copyright 2021 Universität Tübingen, Germany
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,8 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-__version__ = "0.0.1"
+"""Alternative console entry point.
+Usage: `python3 ./datameta_client.py --help`
+"""
 
-# the major version of the API the server which the client is talking to
-# should always match the version of the client, thus:
-api_version = "v" + __version__.split(".")[0]
+from datameta_client.__main__ import app
+
+app()

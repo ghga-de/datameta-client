@@ -1,0 +1,10 @@
+# The following parameters can also be specified
+# via environment variables:
+# - DATAMETA_URL
+# - DATAMETA_TOKEN
+
+# url to the datameta instance, if running locally, e.g.:
+url: "http://localhost:8080/" 
+
+# a token/API key obtained from the datameta instance, e.g.:
+token: "SYV40qEjbURZwiI1yXKP5GhDqdd3u0kpa7BUASULBd8QpWvR1kTXnIKaO7lQmgTj" 
