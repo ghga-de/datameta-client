@@ -91,7 +91,7 @@ def get_config(
     config_from_file = {}
     if config_file:
         with open(config_file, "r") as cfile:
-            config_from_file = yaml.safe_load(config_file)
+            config_from_file = yaml.safe_load(cfile)
 
     # prioritize param info from different sources:
     url = url if url else get_config_param("url", config_from_file)
