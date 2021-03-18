@@ -18,14 +18,14 @@ from typing import Union, List
 
 from .errors import JsonObjectError
 
-JSON=Union[dict, str]
+JSON=Union[dict, str, list]
 
-def get_dict_from(obj:JSON) -> dict:
+def get_list_or_dict_from(obj:JSON) -> dict:
     """Accepts a dict or a str which can either be a json representation
     or the path to a json file. The function tries parse the information
     and return a dict."""
-    # if obj is a dict, directly return:
-    if isinstance(obj, dict):
+    # if obj is a dict or a list, directly return:
+    if isinstance(obj, dict) or isinstance(obj, list):
         return obj
 
     if isinstance(obj, str):

@@ -20,7 +20,7 @@ from datameta_client_lib.api import metadata_api
 from datameta_client_lib.model.meta_data_set import MetaDataSet
 
 from .config import get_config
-from .utils import get_dict_from
+from .utils import get_list_or_dict_from
 from .printing import info, success, result
 
 app = typer.Typer()
@@ -37,7 +37,7 @@ def add(
     config = get_config(url, token)
     
     info("Parsing metadata record", quiet)
-    metadata_record = get_dict_from(metadata_json)
+    metadata_record = get_list_or_dict_from(metadata_json)
 
     info("Sending metadata to server", quiet)
     with ApiClient(config) as api_client:

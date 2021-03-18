@@ -28,4 +28,4 @@ def test_get_config():
     # utils.get json should always return
     # the original dict:
     for obj in test_objs:
-        assert utils.get_dict_from(obj) == test_dict
+        assert utils.get_list_or_dict_from(obj) == test_dict

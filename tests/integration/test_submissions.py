@@ -1,9 +1,3 @@
-"""Test File related actions.
-Please Note: This tests require that the datameta storage
-can be accessed at the path specified in
-the env variable "DATAMETA_STORAGE_PATH".
-"""
-
 import os
 from datameta_client import submissions, metadatasets, files
 from . import fixtures

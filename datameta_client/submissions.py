@@ -21,7 +21,7 @@ from datameta_client_lib.api import submissions_api
 from datameta_client_lib.model.submission_request import SubmissionRequest
 
 from .config import get_config
-from .utils import get_dict_from, list_or_comma_sep_str
+from .utils import get_list_or_dict_from, list_or_comma_sep_str
 from .printing import info, success, result, error
 
 app = typer.Typer()
