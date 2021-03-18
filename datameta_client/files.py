@@ -15,12 +15,14 @@
 import os
 import typer
 import hashlib
+import json
 import requests
 from typing import Optional
 
 from datameta_client_lib import ApiClient
 from datameta_client_lib.api import files_api
 from datameta_client_lib.model.file_announcement import FileAnnouncement
+from datameta_client_lib.model.file_upload_response import FileUploadResponse
 from datameta_client_lib.model.file_update_request import FileUpdateRequest
 
 from .config import get_config
@@ -84,3 +86,5 @@ def stage(
 
     success(f"File \"{name}\" was successfully stageed.", quiet)
     return result(api_response, quiet)
+    success(f"File \"{name}\" was successfully added.", quiet)
+    result(api_response, quiet)

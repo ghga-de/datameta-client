@@ -18,6 +18,7 @@ from typing import Optional
 from datameta_client_lib import ApiClient
 from datameta_client_lib.api import metadata_api
 from datameta_client_lib.model.meta_data_set import MetaDataSet
+from datameta_client_lib import ApiClient, ApiException
 
 from .config import get_config
 from .utils import get_list_or_dict_from

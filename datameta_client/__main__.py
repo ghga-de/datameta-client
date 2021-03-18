@@ -29,7 +29,6 @@ app.add_typer(metadatasets_app, name="metadatasets")
 app.add_typer(submissions_app, name="submissions")
 app.add_typer(shortcuts_app, name="shortcuts")
 
-
 @app.callback()
 def main(config:str = typer.Option(None)):
     """Provide config via YAML file"""

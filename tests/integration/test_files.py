@@ -10,5 +10,3 @@ def test_stage_file():
         path=fixtures.files[0]["path"]
     )
     assert id_in_response(response, has_site_id=True)
-
-
