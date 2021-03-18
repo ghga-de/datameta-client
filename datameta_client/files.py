@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 import typer
 import hashlib
 import requests
@@ -29,8 +30,8 @@ app = typer.Typer()
 
 @app.command()
 def add(
-    name:str, 
     path: str, 
+    name:Optional[str] = None, 
     url:Optional[str] = None, 
     token:Optional[str] = None,
     quiet:bool = False,
@@ -40,6 +41,9 @@ def add(
     # Compute the checksum of the provided file
     with open(path, 'rb') as infile:
         md5 = hashlib.md5(infile.read()).hexdigest()
+
+    # if name not provided, infer it from the file
+    name = os.path.basename(path)
 
     # [API CALL 1]
     # Announce the file to the API. The announcement provides the filename and

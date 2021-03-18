@@ -61,7 +61,7 @@ def error(message:str, quiet=False):
 
 
 def result(
-    result_obj:Any, # a response obj from the
+    result_obj:Any, # e.g. a response obj from the
                     # datameta_client_lib
     quiet:bool=False
 ) -> Union[dict, list]:
@@ -75,10 +75,20 @@ def result(
         )
         echo(styled_prefix, err=True)
 
+        result_str = (
+            result_obj.to_str() 
+            if hasattr(result_obj, "to_str")
+            else str(result_obj)
+        )
+
         styled_result = style(
-            result_obj.to_str(),
+            result_str,
             fg=BLUE
         )
         echo(styled_result, err=False)
     
-    return result_obj.to_dict()
+    return (
+        result_obj.to_dict() 
+        if hasattr(result_obj, "to_dict")
+        else result_obj
+    )

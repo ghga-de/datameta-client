@@ -21,7 +21,7 @@ from datameta_client_lib.api import submissions_api
 from datameta_client_lib.model.submission_request import SubmissionRequest
 
 from .config import get_config
-from .utils import get_dict_from
+from .utils import get_dict_from, list_or_comma_sep_str
 from .printing import info, success, result, error
 
 app = typer.Typer()
@@ -29,8 +29,10 @@ app = typer.Typer()
 
 @app.command()
 def prevalidate(
-    metadataset_ids:List[str],
-    file_ids:List[str],
+    metadataset_ids, # list of string or
+                     # commaseperated string
+    file_ids, # list of string or
+                     # commaseperated string
     label:Optional[str] = None,
     url:Optional[str] = None, 
     token:Optional[str] = None,
@@ -41,8 +43,11 @@ def prevalidate(
         quiet
     )
     config = get_config(url, token)
+
+    metadataset_ids = list_or_comma_sep_str(metadataset_ids)
+    file_ids = list_or_comma_sep_str(file_ids)
     
-    info("Assembling submission request")
+    info("Assembling submission request", quiet)
     submission_request = SubmissionRequest(
         metadataset_ids=metadataset_ids,
         file_ids=file_ids,
@@ -51,7 +56,7 @@ def prevalidate(
 
     info("Sending request for validation", quiet)
     with ApiClient(config) as api_client:
-        api_instance = submissions_api.SubmissionApi(api_client)
+        api_instance = submissions_api.SubmissionsApi(api_client)
 
         try:
             api_response = api_instance.prevalidate_submission(
@@ -62,7 +67,7 @@ def prevalidate(
                 "successfully passed. Feel free to actually post this submission.",
                 quiet
             )
-            return results(True, quiet)
+            return result(True, quiet)
 
 
         except ApiException as e:
@@ -73,4 +78,38 @@ def prevalidate(
                     "An error not related to validation occured: " + str(e),
                     quiet
                 )
-            return results(False, quiet)
+            return result(False, quiet)
+
+
+@app.command()
+def submit(
+    metadataset_ids, # list of string or
+                     # commaseperated string
+    file_ids, # list of string or
+                     # commaseperated string
+    label:Optional[str] = None,
+    url:Optional[str] = None, 
+    token:Optional[str] = None,
+    quiet:bool = False,
+) -> bool:
+    config = get_config(url, token)
+    
+    metadataset_ids = list_or_comma_sep_str(metadataset_ids)
+    file_ids = list_or_comma_sep_str(file_ids)
+    
+    info("Assembling submission request", quiet)
+    submission_request = SubmissionRequest(
+        metadataset_ids=metadataset_ids,
+        file_ids=file_ids,
+        label=label
+    )
+
+    info("Posting submission to the server", quiet)
+    with ApiClient(config) as api_client:
+        api_instance = submissions_api.SubmissionsApi(api_client)
+        api_response = api_instance.create_submission(
+            submission_request=submission_request
+        )
+
+    success("Submission was successfully posted.")
+    return result(api_response)

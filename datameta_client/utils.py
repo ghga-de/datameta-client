@@ -14,7 +14,7 @@
 
 import os
 import json
-from typing import Union
+from typing import Union, List
 
 from .errors import JsonObjectError
 
@@ -52,3 +52,16 @@ def get_dict_from(obj:JSON) -> dict:
         "Please either provide a dict or a string which either can be " +
         "parsed as json or points to a json file."
     )
+
+
+def list_or_comma_sep_str(obj:Union[str, List[str]]):
+    # if its a list of string, return
+    if isinstance(obj, list):
+        return obj
+    # if its a single string, break it down by commas:
+    elif isinstance(obj, str):
+        return [item.strip() for item in obj.split(',')]
+    else:
+        raise ValueError(
+            "Please either provide a list of strings or " +
+            "a single strings with items seperated by commas.")

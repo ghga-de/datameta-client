@@ -18,12 +18,14 @@ from typing import Optional
 
 from .files import app as files_app
 from .metadatasets import app as metadatasets_app
+from .submissions import app as submissions_app
 from .config import set_global_config
 
 
 app = typer.Typer()
 app.add_typer(files_app, name="files")
 app.add_typer(metadatasets_app, name="metadatasets")
+app.add_typer(submissions_app, name="submissions")
 
 
 @app.callback()
