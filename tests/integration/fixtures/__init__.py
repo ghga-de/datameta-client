@@ -29,7 +29,7 @@ from datameta_client import metadatasets
 def get_fresh_metadataset_id(): 
     mset = replace_ID(metadataset_record)
     return [
-        metadatasets.add(
+        metadatasets.stage(
             metadata_json=mset
         )["id"]["uuid"]
     ]

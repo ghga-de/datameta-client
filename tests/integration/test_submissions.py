@@ -5,7 +5,7 @@ from .utils import id_in_response
 
 # establish fixtures file and metadataset fixtures in the db:
 file_ids = [
-    files.add(path=f["path"])["id"]["uuid"]
+    files.stage(path=f["path"])["id"]["uuid"]
     for f in fixtures.files
 ]
 

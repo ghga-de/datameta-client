@@ -27,7 +27,7 @@ app = typer.Typer()
 
 
 @app.command()
-def add(
+def stage(
     metadata_json, # dict or str 
                    # (Union type not yet supported by typer)
     url:Optional[str] = None, 
@@ -47,5 +47,5 @@ def add(
             meta_data_set=meta_data_set
         )
         
-    success("Metadata record successfully added.")
+    success("Metadata record successfully stageed.")
     return result(api_response, quiet)

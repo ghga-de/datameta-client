@@ -4,7 +4,7 @@ import json
 
 from . import fixtures
 
-def test_add_metadataset():
-    metadatasets.add(
+def test_stage_metadataset():
+    metadatasets.stage(
         metadata_json=json.dumps(fixtures.metadataset_record)
     )

@@ -29,7 +29,7 @@ from .printing import info, success, result
 app = typer.Typer()
 
 @app.command()
-def add(
+def stage(
     path: str, 
     name:Optional[str] = None, 
     url:Optional[str] = None, 
@@ -82,5 +82,5 @@ def add(
         )
         api_response = api_instance.update_file(id, file_update_request=file_update_request)
 
-    success(f"File \"{name}\" was successfully added.", quiet)
+    success(f"File \"{name}\" was successfully stageed.", quiet)
     return result(api_response, quiet)

@@ -25,7 +25,7 @@ app = typer.Typer()
 
 
 @app.command()
-def add_and_submit(
+def stage_and_submit(
     metadatasets_json, # a single or a list of records dicts,
                        # or the equivalent in a json string or file
     files_dir:Optional[str],
@@ -66,7 +66,7 @@ def add_and_submit(
     for idx, mset in enumerate(msets):
         info(f"Staging metadataset {idx+1} of {len(files_to_upload)}")
         msets_uploaded.append(
-            metadatasets.add(
+            metadatasets.stage(
                 mset,
                 url=url,
                 token=token,
@@ -82,7 +82,7 @@ def add_and_submit(
     for idx, file_ in enumerate(files_to_upload):
         info(f"Staging file {idx+1} of {len(files_to_upload)}")
         files_uploaded.append(
-            files.add(
+            files.stage(
                 file_,
                 url=url,
                 token=token,

@@ -3,14 +3,14 @@ from datameta_client import files
 from . import fixtures
 
 
-def test_add_file():
+def test_stage_file():
     # remove any files from the datameta storage:
     old_files = os.listdir(fixtures.storage_path)
     for old_file in old_files:
         os.remove(os.path.join(fixtures.storage_path, old_file))
 
     # upload file through API:
-    files.add(
+    files.stage(
         name=fixtures.files[0]["name"],
         path=fixtures.files[0]["path"]
     )
