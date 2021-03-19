@@ -66,8 +66,7 @@ def stage(
     with open(path, 'rb') as infile:
         api_response_upload = requests.post(
                 api_response_announce['url_to_upload'],
-                # [!!] TODO THIS IS TO BE REMOVED!
-                headers={'Authorization' : 'Bearer ' + config.access_token, **api_response_announce.request_headers },
+                headers=api_response_announce.request_headers,
                 files = { 'file' : infile } )
         api_response_upload.raise_for_status()
     info("Upload completed", quiet)
