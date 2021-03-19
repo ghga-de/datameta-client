@@ -20,7 +20,7 @@ from setuptools import find_packages, setup
 SETUP_DIR = os.path.dirname(__file__)
 README = os.path.join(SETUP_DIR, 'README.md')
 
-version = '0.0.1'
+version = '0.1.0'
 major_version = int(version.split(".")[0])
 
 setup(
