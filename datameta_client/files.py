@@ -12,17 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import sys
+import os
 import typer
-import json
 import hashlib
+import json
 import requests
-from pprint import pprint
 from typing import Optional
 
-from datameta_client_lib import ApiClient, ApiException
-from datameta_client_lib.api import files_api, metadata_api
-from datameta_client_lib.model.meta_data_set import MetaDataSet
+from datameta_client_lib import ApiClient
+from datameta_client_lib.api import files_api
 from datameta_client_lib.model.file_announcement import FileAnnouncement
 from datameta_client_lib.model.file_upload_response import FileUploadResponse
 from datameta_client_lib.model.file_update_request import FileUpdateRequest
@@ -33,22 +31,21 @@ from .printing import info, success, result
 app = typer.Typer()
 
 @app.command()
-def test():
-    pass
-
-@app.command()
-def add(
-    name:str, 
+def stage(
     path: str, 
+    name:Optional[str] = None, 
     url:Optional[str] = None, 
     token:Optional[str] = None,
     quiet:bool = False,
-):
+) -> dict:
     config = get_config()
 
     # Compute the checksum of the provided file
     with open(path, 'rb') as infile:
         md5 = hashlib.md5(infile.read()).hexdigest()
+
+    # if name not provided, infer it from the file
+    name = os.path.basename(path)
 
     # [API CALL 1]
     # Announce the file to the API. The announcement provides the filename and
@@ -87,5 +84,7 @@ def add(
         )
         api_response = api_instance.update_file(id, file_update_request=file_update_request)
 
+    success(f"File \"{name}\" was successfully stageed.", quiet)
+    return result(api_response, quiet)
     success(f"File \"{name}\" was successfully added.", quiet)
     result(api_response, quiet)

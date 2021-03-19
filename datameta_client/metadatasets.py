@@ -12,48 +12,41 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import sys
 import typer
-import json
-import hashlib
-import requests
-from pprint import pprint
 from typing import Optional
 
-from datameta_client_lib import ApiClient, ApiException
-from datameta_client_lib.api import files_api, metadata_api
+from datameta_client_lib import ApiClient
+from datameta_client_lib.api import metadata_api
 from datameta_client_lib.model.meta_data_set import MetaDataSet
-from datameta_client_lib.model.file_announcement import FileAnnouncement
-from datameta_client_lib.model.file_upload_response import FileUploadResponse
-from datameta_client_lib.model.file_update_request import FileUpdateRequest
+from datameta_client_lib import ApiClient, ApiException
 
 from .config import get_config
-from .utils import get_dict_from
+from .utils import get_list_or_dict_from
 from .printing import info, success, result
 
 app = typer.Typer()
 
 
 @app.command()
-def add(
+def stage(
     metadata_json, # dict or str 
                    # (Union type not yet supported by typer)
     url:Optional[str] = None, 
     token:Optional[str] = None,
     quiet:bool = False,
-):
+) -> dict:
     config = get_config(url, token)
     
     info("Parsing metadata record", quiet)
-    metadata_record = get_dict_from(metadata_json)
+    metadata_record = get_list_or_dict_from(metadata_json)
 
+    info("Sending metadata to server", quiet)
     with ApiClient(config) as api_client:
         api_instance = metadata_api.MetadataApi(api_client)
         meta_data_set = MetaDataSet(record=metadata_record)
-        info("Sending metadata to server", quiet)
         api_response = api_instance.create_meta_data_set(
             meta_data_set=meta_data_set
         )
         
-    success("Metadata record successfully added.")
+    success("Metadata record successfully staged.")
     return result(api_response, quiet)

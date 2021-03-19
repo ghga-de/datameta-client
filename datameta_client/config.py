@@ -14,6 +14,7 @@
 
 import os
 import yaml
+import pathlib
 from typing import Optional
 from urllib.parse import urljoin
 
@@ -21,6 +22,8 @@ import datameta_client_lib
 
 from . import api_version
 from .errors import ConfigError
+
+default_config_file = os.path.join(pathlib.Path.home(), ".dmclient.yaml")
 
 global_config = { 
     # global default config parameters
@@ -72,6 +75,7 @@ def get_config(
         - the function parameters url and token
         - env variables (DATAMETA_URL, DATAMETA_TOKEN)
         - config YAML file provided by "config_file"
+        - if no config file provided, we will search for "~/.dmconfig.yaml" 
         - the global variable "global_config" set by the CLI
 
     Args:
@@ -79,11 +83,15 @@ def get_config(
         token (Optional[str], optional): Token obtained from the datameta instance. Defaults to None.
         config_file (Optional[Path], optional): Path to a config file. Defaults to None.
     """
+    # if config file not provided, fall back to default config file:
+    if not config_file and os.path.isfile(default_config_file):
+        config_file = default_config_file
+
     # read config file, if provided:
     config_from_file = {}
     if config_file:
         with open(config_file, "r") as cfile:
-            config_from_file = yaml.safe_load(config_file)
+            config_from_file = yaml.safe_load(cfile)
 
     # prioritize param info from different sources:
     url = url if url else get_config_param("url", config_from_file)

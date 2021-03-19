@@ -20,6 +20,9 @@ from setuptools import find_packages, setup
 SETUP_DIR = os.path.dirname(__file__)
 README = os.path.join(SETUP_DIR, 'README.md')
 
+version = '0.1.0'
+major_version = int(version.split(".")[0])
+
 setup(
     name                           = 'datameta_client',
     version                        = '0.0.1',
@@ -39,7 +42,7 @@ setup(
     },
     install_requires=[
         'typer',
-        'datameta-client-lib==0.0.1',
+        f'datameta-client-lib>=0.4.0,<{major_version+1}',
         'pyyaml',
         'requests',
     ],
