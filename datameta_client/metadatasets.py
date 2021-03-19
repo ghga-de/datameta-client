@@ -48,5 +48,5 @@ def stage(
             meta_data_set=meta_data_set
         )
         
-    success("Metadata record successfully stageed.")
+    success("Metadata record successfully staged.")
     return result(api_response, quiet)
