@@ -42,7 +42,7 @@ def stage_and_submit(
     # parse metadatasets_json:
     info("Parsing metadata", quiet)
     msets = get_list_or_dict_from(metadatasets_json)
-    msets = metadatasets if isinstance(msets, list) else [msets]
+    msets = msets if isinstance(msets, list) else [msets]
 
     # get a flat set of record values in that metadataset:
     record_values = set()
