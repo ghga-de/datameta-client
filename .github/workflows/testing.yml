@@ -1,0 +1,39 @@
+name: Run Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Deploy Application Stack
+      run: |
+        docker-compose -f util/testing-app-stack.yml up -d
+    - uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+    - name: Install datameta-client
+      run: pip install -e ".[testing]"
+    - name: Wait for Server...
+      run: |
+        for i in $(seq 10); do
+          echo $i
+          curl http://localhost:8080/login &>/dev/null && break
+          sleep 5s
+        done
+        if curl http://localhost:8080/login &>/dev/null; then
+          echo "OK"
+        else
+          echo "ERR"
+          exit 1
+        fi
+    - name: Run Tests
+      env:
+        DATAMETA_URL: http://localhost:8080/api/v0
+        DATAMETA_TOKEN: testingkey
+      run: pytest .
