@@ -25,7 +25,8 @@ major_version = int(version.split(".")[0])
 
 setup(
     name                           = 'datameta_client',
-    version                        = '0.0.1',
+    version                        = version,
+    packages                       = find_packages(),
     description                    = 'A high-level client for interacting with a DataMeta service',
     long_description               = open(README).read(),
     long_description_content_type  = "text/markdown",
