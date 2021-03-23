@@ -12,7 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-__version__ = "0.0.1"
+from pkg_resources import get_distribution
+
+__version__ = get_distribution('datameta_client').version
 
 # the major version of the API the server which the client is talking to
 # should always match the version of the client, thus:
