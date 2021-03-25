@@ -31,7 +31,9 @@ app.add_typer(shortcuts_app, name="shortcuts")
 
 @app.callback()
 def main(config:str = typer.Option(None)):
-    """Provide config via YAML file"""
+    """This is a client to stage and submit files and metadata
+    to a datameta server.
+    """
     if config:
         with open(config, "r") as cfile:
             set_global_config(yaml.safe_load(cfile))
