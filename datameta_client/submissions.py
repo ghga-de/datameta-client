@@ -38,6 +38,15 @@ def prevalidate(
     token:Optional[str] = None,
     quiet:bool = False,
 ) -> bool:
+    """\"Dry-run\" option to check the validity of a submission request. The submission will not
+    be stored on the server.
+
+    This requires a list of metadataset IDs and a list of file IDs. The IDs can be either
+    given as a comman-separated string or as a Python list of string (the latter is not
+    available when using the CLI).
+
+    Optionally, you may also provide a human-readable label for the submission.
+    """
     info(
         "This will only validate the request. No submission will be posted.",
         quiet
@@ -91,7 +100,15 @@ def submit(
     url:Optional[str] = None, 
     token:Optional[str] = None,
     quiet:bool = False,
-) -> bool:
+) -> dict:
+    """Submit a set of metadatasets and a set of files.
+
+    This requires a list of metadataset IDs and a list of file IDs. The IDs can be either
+    given as a comman-separated string or as a Python list of string (the latter is not
+    available when using the CLI).
+
+    Optionally, you may also provide a human-readable label for the submission.
+    """
     config = get_config(url, token)
     
     metadataset_ids = list_or_comma_sep_str(metadataset_ids)
