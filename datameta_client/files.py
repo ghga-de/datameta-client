@@ -38,6 +38,13 @@ def stage(
     token:Optional[str] = None,
     quiet:bool = False,
 ) -> dict:
+    """Stage and upload a single file.
+
+    Please specify the path to the file and,
+    optionally, a file name that is used for
+    storing the file (by default the original file
+    name will be used).
+    """
     config = get_config()
 
     # Compute the checksum of the provided file
