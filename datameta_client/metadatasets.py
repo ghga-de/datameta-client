@@ -45,6 +45,11 @@ def stage(
     
     info("Parsing metadata record", quiet)
     metadata_record = get_list_or_dict_from(metadata_json)
+    if isinstance(metadata_record, list):
+        JsonObjectError(
+            "A list of metadata records is not allowed here." +
+            "Please only specify a single record." 
+        )
 
     info("Sending metadata to server", quiet)
     with ApiClient(config) as api_client:
