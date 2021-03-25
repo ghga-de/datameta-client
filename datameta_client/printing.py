@@ -18,6 +18,8 @@ import json
 from typer import style, echo
 from typer.colors import BLUE, GREEN, YELLOW, RED, MAGENTA
 from typing import Union, Any
+from datetime import datetime
+from copy import deepcopy
 
 def print_message(message:str, prefix:str, color:str, quiet=False):
     """Base function to be used by the other print functions
@@ -60,6 +62,35 @@ def error(message:str, quiet=False):
     print_message(message, "error", RED, quiet)
 
 
+def convert_datetimes_to_str_dict(obj:dict):
+    """To be used in convert_datetimes_to_str"""
+    obj_ = deepcopy(obj)
+    for key, value in obj_.items():
+        if isinstance(value, dict):
+            for key_, value_ in value.items():
+                if isinstance(value_, datetime):
+                    obj_[key][key_] = value_.isoformat()
+        if isinstance(value, datetime):
+            obj_[key] = value.isoformat()
+    return obj_
+
+
+def convert_datetimes_to_str(obj:Union[dict, list]):
+    """Convert any datetime fields into iso-formatted strings"""
+    assert isinstance(obj, (dict, list)), "obj has to be dict or list of dicts"
+    if isinstance(obj, list):
+        return [convert_datetimes_to_str_dict(item) for item in obj]
+    else:
+        return convert_datetimes_to_str_dict(obj)
+
+
+def format_obj_as_str(obj:Any):
+    try:
+        return json.dumps(obj, indent=4)
+    except:
+        return str(obj)
+
+
 def result(
     result_obj:Any, # e.g. a response obj from the
                     # datameta_client_lib
@@ -67,6 +98,15 @@ def result(
 ) -> Union[dict, list]:
     """Prints response obj procuded using the datameta_client_lib
     to stdout and returns its content."""
+
+    # Format results object into a dict or list of dict if possible:
+    res_obj_dict = (
+        result_obj.to_dict() 
+        if hasattr(result_obj, "to_dict") 
+        else result_obj
+    )
+
+    # print results:
     if not quiet:
         styled_prefix = style(
             "[result]:",
@@ -75,20 +115,16 @@ def result(
         )
         echo(styled_prefix, err=True)
 
-        result_str = (
-            result_obj.to_str() 
-            if hasattr(result_obj, "to_str")
-            else str(result_obj)
+        formatted_res_obj = (
+            convert_datetimes_to_str(res_obj_dict)
+            if isinstance(res_obj_dict, (dict, list))
+            else res_obj_dict
         )
 
         styled_result = style(
-            result_str,
+            format_obj_as_str(formatted_res_obj),
             fg=BLUE
         )
         echo(styled_result, err=False)
     
-    return (
-        result_obj.to_dict() 
-        if hasattr(result_obj, "to_dict")
-        else result_obj
-    )
+    return res_obj_dict
