@@ -35,6 +35,12 @@ def stage(
     token:Optional[str] = None,
     quiet:bool = False,
 ) -> dict:
+    """Stage a single metadataset record.
+
+    The metadata record may be given as a JSON string,
+    as a path to a JSON file, or as Python dict 
+    (the latter is not available when used from the CLI).
+    """
     config = get_config(url, token)
     
     info("Parsing metadata record", quiet)
