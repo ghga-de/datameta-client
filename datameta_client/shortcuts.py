@@ -33,7 +33,16 @@ def stage_and_submit(
     url:Optional[str] = None, 
     token:Optional[str] = None,
     quiet:bool = False,
-) -> bool:
+) -> dict:
+    """This "shortcut" will stage and submit files and metadata records in one go.
+
+    It requires one or multiple metadata records and the path to the directory
+    containing the files to upload. The metadata records may be given as a JSON string,
+    as a path to a JSON file, or as Python (list of) dict (the latter is not available when
+    used from the CLI).
+
+    Optionally, you may also provide a human-readable label for the submission.
+    """
     info(
         "This will stage and directly submit metadatasets and files in a single run.",
         quiet
