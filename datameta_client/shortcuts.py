@@ -64,7 +64,7 @@ def stage_and_submit(
     info("Staging metadatasets ...", quiet)
     msets_uploaded = []
     for idx, mset in enumerate(msets):
-        info(f"Staging metadataset {idx+1} of {len(files_to_upload)}")
+        info(f"Staging metadataset {idx+1} of {len(msets)}")
         msets_uploaded.append(
             metadatasets.stage(
                 mset,
