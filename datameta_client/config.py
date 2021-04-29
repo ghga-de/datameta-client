@@ -98,7 +98,15 @@ def get_config(
     token = token if token else get_config_param("token", config_from_file)
 
     # return configuration for datameta_client_lib
-    return datameta_client_lib.Configuration(
+    config = datameta_client_lib.Configuration(
         access_token = token,
         host = urljoin(url, f"/api/{api_version}")
     )
+
+    proxy_envs = ['HTTPS_PROXY' , 'https_proxy'] if config._base_path.lower().startswith("https") else ['HTTP_PROXY', 'http_proxy']
+    for proxy_env in proxy_envs:
+        if os.environ.get(proxy_env):
+            config.proxy = os.environ.get(proxy_env)
+            break
+
+    return config
