@@ -17,6 +17,7 @@ import yaml
 import pathlib
 from typing import Optional
 from urllib.parse import urljoin
+from urllib3.util import make_headers, parse_url
 
 import datameta_client_lib
 
@@ -106,7 +107,10 @@ def get_config(
     proxy_envs = ['HTTPS_PROXY' , 'https_proxy'] if config._base_path.lower().startswith("https") else ['HTTP_PROXY', 'http_proxy']
     for proxy_env in proxy_envs:
         if os.environ.get(proxy_env):
-            config.proxy = os.environ.get(proxy_env)
+            proxy_url = parse_url(os.environ.get(proxy_env))
+            if proxy_url.auth:
+                config.proxy_headers = make_headers(proxy_basic_auth=proxy_url.auth)
+            config.proxy = str(proxy_url._replace(auth=None))
             break
 
     return config
