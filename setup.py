@@ -43,7 +43,7 @@ setup(
     },
     install_requires=[
         'typer',
-        f'datameta-client-lib>=0.14.0,<{major_version+1}',
+        f'datameta-client-lib>=0.17.0,<{major_version+1}',
         'pyyaml',
         'requests',
     ],
