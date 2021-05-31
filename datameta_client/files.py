@@ -20,7 +20,7 @@ import requests
 from typing import Optional
 
 from datameta_client_lib import ApiClient
-from datameta_client_lib.api import files_api
+from datameta_client_lib.api import files_api, remote_procedure_calls_api
 from datameta_client_lib.model.file_announcement import FileAnnouncement
 from datameta_client_lib.model.file_upload_response import FileUploadResponse
 from datameta_client_lib.model.file_update_request import FileUpdateRequest
@@ -32,11 +32,11 @@ app = typer.Typer()
 
 @app.command()
 def stage(
-    path: str, 
-    name:Optional[str] = None, 
-    url:Optional[str] = None, 
-    token:Optional[str] = None,
-    quiet:bool = False,
+    path: str,
+    name:Optional[str]    = None,
+    url:Optional[str]     = None,
+    token:Optional[str]   = None,
+    quiet:bool            = False,
 ) -> dict:
     """Stage and upload a single file.
 
@@ -77,7 +77,7 @@ def stage(
                 files = { 'file' : infile } )
         api_response_upload.raise_for_status()
     info("Upload completed", quiet)
-    
+
     # [API CALL 3]
     info("Informing the backend that the file upload was performed", quiet)
     with ApiClient(config) as api_client:
@@ -90,7 +90,30 @@ def stage(
         )
         api_response = api_instance.update_file(id, file_update_request=file_update_request)
 
-    success(f"File \"{name}\" was successfully stageed.", quiet)
-    return result(api_response, quiet)
     success(f"File \"{name}\" was successfully added.", quiet)
-    result(api_response, quiet)
+    return result(api_response, quiet)
+
+@app.command()
+def download_url(
+        file_id: str,
+        expires: Optional[int]   = 1,
+        url:Optional[str]        = None,
+        token:Optional[str]      = None,
+        quiet:bool               = False
+        ) -> dict:
+
+    """Obtain a download URL for a given file ID.
+
+    Please specify the file ID (UUID or site ID) and a desired expiration time
+    of the download URL in minutes."""
+    config = get_config()
+
+    info(f"Requesting download URL for file {file_id}", quiet)
+    with ApiClient(config) as api_client:
+        # Create an instance of the API class
+        api_instance = remote_procedure_calls_api.RemoteProcedureCallsApi(api_client)
+
+        response = api_instance.get_file_url(file_id, expires=expires)
+
+    success("Download URL received.", quiet)
+    return result(response, quiet)
