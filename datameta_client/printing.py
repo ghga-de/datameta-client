@@ -100,11 +100,10 @@ def result(
     to stdout and returns its content."""
 
     # Format results object into a dict or list of dict if possible:
-    res_obj_dict = (
-        result_obj.to_dict() 
-        if hasattr(result_obj, "to_dict") 
-        else result_obj
-    )
+    if isinstance(result_obj, list):
+        res_obj_dict = [list_item.to_dict() if hasattr(list_item, "to_dict") else list_item for list_item in result_obj]
+    else:
+        res_obj_dict = result_obj.to_dict() if hasattr(result_obj, "to_dict") else result_obj
 
     # print results:
     if not quiet:
