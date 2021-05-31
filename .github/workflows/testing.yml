@@ -29,6 +29,7 @@ jobs:
         if curl http://localhost:8080/login &>/dev/null; then
           echo "OK"
         else
+          docker-compose -f util/testing-app-stack.yml logs
           echo "ERR"
           exit 1
         fi
