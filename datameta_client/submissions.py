@@ -129,4 +129,4 @@ def submit(
         )
 
     success("Submission was successfully posted.")
-    return result(api_response)
+    return result(api_response.to_dict())

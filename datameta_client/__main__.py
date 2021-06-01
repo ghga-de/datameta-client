@@ -20,6 +20,7 @@ from .files import app as files_app
 from .metadatasets import app as metadatasets_app
 from .submissions import app as submissions_app
 from .shortcuts import app as shortcuts_app
+from .services import app as services_app
 from .config import set_global_config
 
 
@@ -28,6 +29,7 @@ app.add_typer(files_app, name="files")
 app.add_typer(metadatasets_app, name="metadatasets")
 app.add_typer(submissions_app, name="submissions")
 app.add_typer(shortcuts_app, name="shortcuts")
+app.add_typer(services_app, name="services")
 
 @app.callback()
 def main(config:str = typer.Option(None)):

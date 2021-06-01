@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import typer
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime, timezone
 
 from datameta_client_lib import ApiClient
@@ -61,7 +61,7 @@ def stage(
         )
 
     success("Metadata record successfully staged.")
-    return result(api_response, quiet)
+    return result(api_response.to_dict(), quiet)
 
 def _add_timezone(dt: Optional[datetime]):
     """Convert to UTC if not None, otherwise return None"""
@@ -77,7 +77,7 @@ def search(
         url:Optional[str] = None,
         token:Optional[str] = None,
         quiet:bool = False
-        ) -> dict:
+        ) -> List[dict]:
     """Query metadatasets according to search critera. If datetimes are
     specified without a timezone, they are assumed to be local time. Note that
     specifying a timezone is only possible programmatically."""
@@ -102,4 +102,5 @@ def search(
         api_instance   = metadata_api.MetadataApi(api_client)
         api_response   = api_instance.get_meta_data_sets(**args)
 
-    return result(api_response, quiet)
+    res = [elem.to_dict() for elem in api_response]
+    return result(res, quiet)

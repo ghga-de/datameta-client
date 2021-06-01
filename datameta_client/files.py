@@ -91,7 +91,7 @@ def stage(
         api_response = api_instance.update_file(id, file_update_request=file_update_request)
 
     success(f"File \"{name}\" was successfully added.", quiet)
-    return result(api_response, quiet)
+    return result(api_response.to_dict(), quiet)
 
 @app.command()
 def download_url(
@@ -113,7 +113,7 @@ def download_url(
         # Create an instance of the API class
         api_instance = remote_procedure_calls_api.RemoteProcedureCallsApi(api_client)
 
-        response = api_instance.get_file_url(file_id, expires=expires)
+        api_response = api_instance.get_file_url(file_id, expires=expires)
 
     success("Download URL received.", quiet)
-    return result(response, quiet)
+    return result(api_response.to_dict(), quiet)

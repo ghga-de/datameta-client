@@ -20,6 +20,8 @@ from typer.colors import BLUE, GREEN, YELLOW, RED, MAGENTA
 from typing import Union, Any
 from datetime import datetime
 from copy import deepcopy
+from datameta_client_lib.model_utils import OpenApiModel
+
 
 def print_message(message:str, prefix:str, color:str, quiet=False):
     """Base function to be used by the other print functions
@@ -92,18 +94,11 @@ def format_obj_as_str(obj:Any):
 
 
 def result(
-    result_obj:Any, # e.g. a response obj from the
-                    # datameta_client_lib
+    result_obj:Any,
     quiet:bool=False
 ) -> Union[dict, list]:
     """Prints response obj procuded using the datameta_client_lib
     to stdout and returns its content."""
-
-    # Format results object into a dict or list of dict if possible:
-    if isinstance(result_obj, list):
-        res_obj_dict = [list_item.to_dict() if hasattr(list_item, "to_dict") else list_item for list_item in result_obj]
-    else:
-        res_obj_dict = result_obj.to_dict() if hasattr(result_obj, "to_dict") else result_obj
 
     # print results:
     if not quiet:
@@ -115,9 +110,9 @@ def result(
         echo(styled_prefix, err=True)
 
         formatted_res_obj = (
-            convert_datetimes_to_str(res_obj_dict)
-            if isinstance(res_obj_dict, (dict, list))
-            else res_obj_dict
+            convert_datetimes_to_str(result_obj)
+            if isinstance(result_obj, (dict, list))
+            else result_obj
         )
 
         styled_result = style(
@@ -125,5 +120,5 @@ def result(
             fg=BLUE
         )
         echo(styled_result, err=False)
-    
-    return res_obj_dict
+
+    return result_obj
