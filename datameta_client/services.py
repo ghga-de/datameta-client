@@ -13,7 +13,6 @@
 # limitations under the License.
 
 import typer
-import pandas as pd
 from copy import deepcopy
 from typing import Optional
 
