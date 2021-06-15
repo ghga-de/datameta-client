@@ -35,6 +35,6 @@ jobs:
         fi
     - name: Run Tests
       env:
-        DATAMETA_URL: http://localhost:8080/api/v0
+        DATAMETA_URL: http://localhost:8080/api/v1
         DATAMETA_TOKEN: testingkey
       run: pytest .
