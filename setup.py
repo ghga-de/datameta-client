@@ -20,7 +20,7 @@ from setuptools import find_packages, setup
 SETUP_DIR = os.path.dirname(__file__)
 README = os.path.join(SETUP_DIR, 'README.md')
 
-version = '0.5.0'
+version = '1.0.0'
 major_version = int(version.split(".")[0])
 
 setup(
@@ -43,7 +43,7 @@ setup(
     },
     install_requires=[
         'typer',
-        f'datameta-client-lib>=0.27.0,<{major_version+1}',
+        f'datameta-client-lib>=1.0.1,<{major_version+1}',
         'pyyaml',
         'requests',
     ],
