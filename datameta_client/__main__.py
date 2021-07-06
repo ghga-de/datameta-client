@@ -21,6 +21,8 @@ from .metadatasets import app as metadatasets_app
 from .submissions import app as submissions_app
 from .shortcuts import app as shortcuts_app
 from .services import app as services_app
+from .users import app as users_app
+from .groups import app as groups_app
 from .config import set_global_config
 
 
@@ -30,6 +32,8 @@ app.add_typer(metadatasets_app, name="metadatasets")
 app.add_typer(submissions_app, name="submissions")
 app.add_typer(shortcuts_app, name="shortcuts")
 app.add_typer(services_app, name="services")
+app.add_typer(users_app, name="users")
+app.add_typer(groups_app, name="groups")
 
 @app.callback()
 def main(config:str = typer.Option(None)):
@@ -39,7 +43,6 @@ def main(config:str = typer.Option(None)):
     if config:
         with open(config, "r") as cfile:
             set_global_config(yaml.safe_load(cfile))
-        
 
 if __name__ == "__main__":
     app()
