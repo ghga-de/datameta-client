@@ -51,3 +51,11 @@ files = [
     for name in os.listdir(base_dir)
     if "test_file_" in name
 ]
+
+# metadataset fixtures:
+metadatum_json_path = os.path.join(
+    base_dir,
+    "test_metadatum.json"
+)
+with open(metadatum_json_path, "r") as json_file:
+    metadatum = json.load(json_file)

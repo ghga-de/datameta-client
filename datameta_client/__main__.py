@@ -18,6 +18,7 @@ from typing import Optional
 
 from .files import app as files_app
 from .metadatasets import app as metadatasets_app
+from .admin import app as admin_app
 from .submissions import app as submissions_app
 from .shortcuts import app as shortcuts_app
 from .services import app as services_app
@@ -29,6 +30,7 @@ from .config import set_global_config
 app = typer.Typer()
 app.add_typer(files_app, name="files")
 app.add_typer(metadatasets_app, name="metadatasets")
+app.add_typer(admin_app, name="admin")
 app.add_typer(submissions_app, name="submissions")
 app.add_typer(shortcuts_app, name="shortcuts")
 app.add_typer(services_app, name="services")
