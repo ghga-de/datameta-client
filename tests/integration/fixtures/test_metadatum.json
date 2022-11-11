@@ -5,7 +5,7 @@
     "example": "This is an example",
     "reg_exp": ".*",
     "date_time_fmt": "string",
-    "is_mandatory": true,
+    "is_mandatory": false,
     "order": 1,
     "is_file": false,
     "is_submission_unique": true,
