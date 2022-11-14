@@ -102,14 +102,24 @@ def put_metadatum(
     info("Sending metadatum to server", quiet)
     with ApiClient(config) as api_client:
         api_instance = metadata_api.MetadataApi(api_client)
-        api_response = api_instance.update_meta_datum(
-            id=metadatum_id,
-            meta_datum=MetaDatum(**metadatum)
-        )
+        try:
+            api_response = api_instance.update_meta_datum(
+                id=metadatum_id,
+                meta_datum=MetaDatum(**metadatum)
+            )
 
-    success("Metadatum was successfully updated.")
-    return result(api_response.to_dict(), quiet)
+            success("Metadatum was successfully updated.")
+            return result(api_response.to_dict(), quiet)
 
+        except ApiException as e:
+            if e.status == requests.codes['bad_request']:
+                error("The request was not valid: " + str(e), quiet)
+            if e.status == requests.codes['forbidden'] or e.status == requests.codes['unauthorized']:
+                error("Access forbidden: " + str(e), quiet)
+            else:
+                error("An error not related to validation occured: " + str(e), quiet)
+            return result(False, quiet)
+            
 @app.command()
 def get_metadata(
     url:Optional[str] = None, 
