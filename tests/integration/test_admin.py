@@ -6,12 +6,9 @@ import random
 from . import fixtures
 from .utils import id_in_response
 
-# workaround to access the list of MetaDatumResponse
-def list_metadata(response):
-    return(response._data_store['value'])
 
 def test_get_metadata():
-    response = list_metadata(admin.get_metadata())
+    response = admin.get_metadata()
     default_metadata_names = ['Date', '#ID', 'ZIP Code', 'FileR1', 'FileR2']
     names = [metadatum.name for metadatum in response]
     for default_metadata_name in default_metadata_names:
@@ -29,7 +26,7 @@ def test_put_metadatum():
         metadatum_json=json.dumps(fixtures.metadatum)
     )
     
-    get_response = list_metadata(admin.get_metadata())
+    get_response = admin.get_metadata()
     
     for metadatum in get_response:
         if metadatum.name == fixtures.metadatum['name']:
@@ -42,7 +39,7 @@ def test_put_metadatum():
         metadatum_json=json.dumps(fixtures.metadatum)
     )
     
-    get_after_put_response = list_metadata(admin.get_metadata())
+    get_after_put_response = admin.get_metadata()
     for metadatum in get_after_put_response:
         if metadatum.id.uuid == test_uuid:
             assert metadatum.name == fixtures.metadatum['name']

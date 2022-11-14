@@ -13,11 +13,12 @@
 # limitations under the License.
 
 import typer
-from typing import Optional
+from typing import Optional, List
 
 from datameta_client_lib import ApiClient
 from datameta_client_lib.api import metadata_api
 from datameta_client_lib.model.meta_datum import MetaDatum
+from datameta_client_lib.model.meta_data_response import MetaDataResponse
 
 from datameta_client_lib import ApiClient, ApiException
 
@@ -36,7 +37,7 @@ def post_metadatum(
     url:Optional[str] = None,
     token:Optional[str] = None,
     quiet:bool = False,
-) -> dict:
+) -> Optional[dict]:
     """Create a new MetaDatum. This is an administrative endpoint that is not accessible for regular users.
     """
     config = get_config(url, token)
@@ -85,7 +86,7 @@ def put_metadatum(
     url:Optional[str] = None, 
     token:Optional[str] = None,
     quiet:bool = False,
-) -> dict:
+) -> Optional[dict]:
     """Update a MetaDatum. This is an administrative endpoint that is not accessible for regular users.
     """
     config = get_config(url, token)
@@ -125,7 +126,7 @@ def get_metadata(
     url:Optional[str] = None, 
     token:Optional[str] = None,
     quiet:bool = False,
-) -> bool:
+) -> List[MetaDataResponse]:
     """Get the metadata definitions that are configured for this site.
     """
 
@@ -134,4 +135,5 @@ def get_metadata(
     with ApiClient(config) as api_client:
         api_instance = metadata_api.MetadataApi(api_client)
         api_response = api_instance.get_meta_data()
-        return result(api_response, quiet)
+        
+    return result(api_response.get("value"), True)
