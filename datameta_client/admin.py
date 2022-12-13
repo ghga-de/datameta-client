@@ -171,7 +171,7 @@ def put_appsettings(
     """
     config = get_config(url, token)
    
-    info("Sending appsetting to server", quiet)
+    info(f"Sending appsetting {appsetting_json} to server", quiet)
     with ApiClient(config) as api_client:
         api_instance = settings_api.SettingsApi(api_client)
         try:
