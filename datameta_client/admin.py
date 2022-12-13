@@ -16,10 +16,10 @@ import typer
 from typing import Optional, List
 
 from datameta_client_lib import ApiClient
-from datameta_client_lib.api import metadata_api
+from datameta_client_lib.api import metadata_api, settings_api
 from datameta_client_lib.model.meta_datum import MetaDatum
 from datameta_client_lib.model.meta_data_response import MetaDataResponse
-
+from datameta_client_lib.model.app_settings_update_request import AppSettingsUpdateRequest
 from datameta_client_lib import ApiClient, ApiException
 
 import requests
@@ -137,3 +137,63 @@ def get_metadata(
         api_response = api_instance.get_meta_data()
         
     return result(api_response.get("value"), True)
+
+#
+#
+#
+
+@app.command()
+def get_appsettings(
+    url:Optional[str] = None, 
+    token:Optional[str] = None,
+    quiet:bool = False,
+) -> List[MetaDataResponse]:
+    """Get the appsettings that are configured for this site.
+    """
+
+    config = get_config(url, token)
+
+    with ApiClient(config) as api_client:
+        api_instance = settings_api.SettingsApi(api_client)
+        api_response = api_instance.app_settings()
+        
+    return([response.to_dict() for response in api_response])
+
+@app.command()
+def put_appsettings(
+    appsetting_id, 
+    appsetting_json,
+    url:Optional[str] = None, 
+    token:Optional[str] = None,
+    quiet:bool = False,
+) -> Optional[dict]:
+    """Update a Appsetting. This is an administrative endpoint that is not accessible for regular users.
+    """
+    config = get_config(url, token)
+   
+    info("Sending appsetting to server", quiet)
+    with ApiClient(config) as api_client:
+        api_instance = settings_api.SettingsApi(api_client)
+        try:
+            api_response = api_instance.update_app_settings(
+                id=appsetting_id,
+                app_settings_update_request = AppSettingsUpdateRequest(**appsetting_json)
+            )
+
+            success("Appsetting was successfully updated.")
+            return result(api_response, quiet)
+
+        except ApiException as e:
+            if e.status == requests.codes['bad_request']:
+                error("The request was not valid: " + str(e), quiet)
+            if e.status == requests.codes['forbidden'] or e.status == requests.codes['unauthorized']:
+                error("Access forbidden: " + str(e), quiet)
+            if e.status == requests.codes['forbidden'] or e.status == requests.codes['unauthorized']:
+                error("Access forbidden: " + str(e), quiet)
+            if e.status == 404:
+                error("Setting does not exist: " + str(e), quiet)
+            if e.status == 500:
+                error("Internal Server Error: " + str(e), quiet)
+            else:
+                error("An error not related to validation occured: " + str(e), quiet)
+            return result(False, quiet)

@@ -43,3 +43,29 @@ def test_put_metadatum():
     for metadatum in get_after_put_response:
         if metadatum.id.uuid == test_uuid:
             assert metadatum.name == fixtures.metadatum['name']
+
+#
+#
+#
+
+def test_get_appsettings():
+    response = admin.get_appsettings()
+    for setting in response:
+        if setting["key"] == "subject_welcome_token":
+            assert setting["value"] == 'Your registration was confirmed!'
+
+def test_put_appsettings():
+    response = admin.get_appsettings()
+    for setting in response:
+        if setting["key"] == "subject_forgot_token":
+            response_put = admin.put_appsettings(
+                appsetting_id=setting["id"]["uuid"],
+                appsetting_json={"value": "TEST"}
+                )
+            assert response_put is None
+    
+    response = admin.get_appsettings()
+    for setting in response:
+        if setting["key"] == "subject_forgot_token":
+            assert setting["value"] == 'TEST'
+    
