@@ -9,7 +9,7 @@ from .utils import id_in_response
 
 def test_get_metadata():
     response = admin.get_metadata()
-    default_metadata_names = ['Date', '#ID', 'ZIP Code', 'FileR1', 'FileR2']
+    default_metadata_names = []
     names = [metadatum.name for metadatum in response]
     for default_metadata_name in default_metadata_names:
         assert default_metadata_name in names
