@@ -126,7 +126,7 @@ def get_metadata(
     url:Optional[str] = None, 
     token:Optional[str] = None,
     quiet:bool = False,
-) -> List[MetaDataResponse]:
+) -> list[dict]:
     """Get the metadata definitions that are configured for this site.
     """
 
@@ -135,8 +135,9 @@ def get_metadata(
     with ApiClient(config) as api_client:
         api_instance = metadata_api.MetadataApi(api_client)
         api_response = api_instance.get_meta_data()
-        
-    return result(api_response.get("value"), True)
+    res = api_response.get("value")
+    res = [response.to_dict() for response in res]
+    return result(res)
 
 #
 #
@@ -147,7 +148,7 @@ def get_appsettings(
     url:Optional[str] = None, 
     token:Optional[str] = None,
     quiet:bool = False,
-) -> List[MetaDataResponse]:
+) -> list[dict]:
     """Get the appsettings that are configured for this site.
     """
 
@@ -156,8 +157,8 @@ def get_appsettings(
     with ApiClient(config) as api_client:
         api_instance = settings_api.SettingsApi(api_client)
         api_response = api_instance.app_settings()
-        
-    return([response.to_dict() for response in api_response])
+    res = [response.to_dict() for response in api_response]
+    return result(res)
 
 @app.command()
 def put_appsettings(

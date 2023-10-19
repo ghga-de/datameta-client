@@ -10,7 +10,7 @@ from .utils import id_in_response
 def test_get_metadata():
     response = admin.get_metadata()
     default_metadata_names = []
-    names = [metadatum.name for metadatum in response]
+    names = [metadatum["name"] for metadatum in response]
     for default_metadata_name in default_metadata_names:
         assert default_metadata_name in names
 
@@ -29,8 +29,8 @@ def test_put_metadatum():
     get_response = admin.get_metadata()
     
     for metadatum in get_response:
-        if metadatum.name == fixtures.metadatum['name']:
-            test_uuid = metadatum.id.uuid
+        if metadatum["name"] == fixtures.metadatum['name']:
+            test_uuid = metadatum["id"]["uuid"]
     
     fixtures.metadatum['name'] = ''.join(random.choices(string.ascii_uppercase, k=10))
 
@@ -41,8 +41,8 @@ def test_put_metadatum():
     
     get_after_put_response = admin.get_metadata()
     for metadatum in get_after_put_response:
-        if metadatum.id.uuid == test_uuid:
-            assert metadatum.name == fixtures.metadatum['name']
+        if metadatum["id"]["uuid"] == test_uuid:
+            assert metadatum["name"] == fixtures.metadatum['name']
 
 #
 #
