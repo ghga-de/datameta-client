@@ -19,7 +19,9 @@ from datameta_client_lib import ApiClient
 from datameta_client_lib.api import metadata_api, settings_api
 from datameta_client_lib.model.meta_datum import MetaDatum
 from datameta_client_lib.model.meta_data_response import MetaDataResponse
-from datameta_client_lib.model.app_settings_update_request import AppSettingsUpdateRequest
+from datameta_client_lib.model.app_settings_update_request import (
+    AppSettingsUpdateRequest,
+)
 from datameta_client_lib import ApiClient, ApiException
 
 import requests
@@ -29,17 +31,19 @@ from .utils import get_list_or_dict_from
 from .printing import info, success, result, error
 from .errors import JsonObjectError
 
-app = typer.Typer(help="Administrative endpoints that are not accessible for regular users.")
+app = typer.Typer(
+    help="Administrative endpoints that are not accessible for regular users."
+)
+
 
 @app.command()
 def post_metadatum(
-    metadatum_json, 
-    url:Optional[str] = None,
-    token:Optional[str] = None,
-    quiet:bool = False,
+    metadatum_json,
+    url: Optional[str] = None,
+    token: Optional[str] = None,
+    quiet: bool = False,
 ) -> Optional[dict]:
-    """Create a new MetaDatum. This is an administrative endpoint that is not accessible for regular users.
-    """
+    """Create a new MetaDatum. This is an administrative endpoint that is not accessible for regular users."""
     config = get_config(url, token)
 
     info("Parsing metadatum", quiet)
@@ -47,8 +51,8 @@ def post_metadatum(
 
     if isinstance(metadatum, list):
         JsonObjectError(
-            "A list of metadata definitions is not allowed here." +
-            "Please only specify a single metadatum."
+            "A list of metadata definitions is not allowed here."
+            + "Please only specify a single metadatum."
         )
 
     info("Sending metadatum to server", quiet)
@@ -57,38 +61,35 @@ def post_metadatum(
         api_instance = metadata_api.MetadataApi(api_client)
         try:
             metadatum = MetaDatum(**metadatum)
-            api_response = api_instance.create_meta_datum(
-                meta_datum=metadatum
-            )
+            api_response = api_instance.create_meta_datum(meta_datum=metadatum)
 
             success(
-                "Your metadatum creation request was " +
-                "successfully passed.",
-                quiet
+                "Your metadatum creation request was " + "successfully passed.", quiet
             )
             return result(api_response.to_dict(), quiet)
 
         except ApiException as e:
-            if e.status == requests.codes['bad_request']:
+            if e.status == requests.codes["bad_request"]:
                 error("The request was not valid: " + str(e), quiet)
-            if e.status == requests.codes['forbidden'] or e.status == requests.codes['unauthorized']:
+            if (
+                e.status == requests.codes["forbidden"]
+                or e.status == requests.codes["unauthorized"]
+            ):
                 error("Access forbidden: " + str(e), quiet)
             else:
                 error("An error not related to validation occured: " + str(e), quiet)
             return result(False, quiet)
-        
 
 
 @app.command()
 def put_metadatum(
-    metadatum_id, 
+    metadatum_id,
     metadatum_json,
-    url:Optional[str] = None, 
-    token:Optional[str] = None,
-    quiet:bool = False,
+    url: Optional[str] = None,
+    token: Optional[str] = None,
+    quiet: bool = False,
 ) -> Optional[dict]:
-    """Update a MetaDatum. This is an administrative endpoint that is not accessible for regular users.
-    """
+    """Update a MetaDatum. This is an administrative endpoint that is not accessible for regular users."""
     config = get_config(url, token)
 
     info("Parsing metadatum", quiet)
@@ -96,8 +97,8 @@ def put_metadatum(
 
     if isinstance(metadatum, list):
         JsonObjectError(
-            "A list of metadata is not allowed here." +
-            "Please only specify a single metadatum."
+            "A list of metadata is not allowed here."
+            + "Please only specify a single metadatum."
         )
 
     info("Sending metadatum to server", quiet)
@@ -105,30 +106,32 @@ def put_metadatum(
         api_instance = metadata_api.MetadataApi(api_client)
         try:
             api_response = api_instance.update_meta_datum(
-                id=metadatum_id,
-                meta_datum=MetaDatum(**metadatum)
+                id=metadatum_id, meta_datum=MetaDatum(**metadatum)
             )
 
             success("Metadatum was successfully updated.")
             return result(api_response.to_dict(), quiet)
 
         except ApiException as e:
-            if e.status == requests.codes['bad_request']:
+            if e.status == requests.codes["bad_request"]:
                 error("The request was not valid: " + str(e), quiet)
-            if e.status == requests.codes['forbidden'] or e.status == requests.codes['unauthorized']:
+            if (
+                e.status == requests.codes["forbidden"]
+                or e.status == requests.codes["unauthorized"]
+            ):
                 error("Access forbidden: " + str(e), quiet)
             else:
                 error("An error not related to validation occured: " + str(e), quiet)
             return result(False, quiet)
-            
+
+
 @app.command()
 def get_metadata(
-    url:Optional[str] = None, 
-    token:Optional[str] = None,
-    quiet:bool = False,
+    url: Optional[str] = None,
+    token: Optional[str] = None,
+    quiet: bool = False,
 ) -> list[dict]:
-    """Get the metadata definitions that are configured for this site.
-    """
+    """Get the metadata definitions that are configured for this site."""
 
     config = get_config(url, token)
 
@@ -137,20 +140,21 @@ def get_metadata(
         api_response = api_instance.get_meta_data()
     res = api_response.get("value")
     res = [response.to_dict() for response in res]
-    return result(res)
+    return result(res, quiet)
+
 
 #
 #
 #
+
 
 @app.command()
 def get_appsettings(
-    url:Optional[str] = None, 
-    token:Optional[str] = None,
-    quiet:bool = False,
+    url: Optional[str] = None,
+    token: Optional[str] = None,
+    quiet: bool = False,
 ) -> list[dict]:
-    """Get the appsettings that are configured for this site.
-    """
+    """Get the appsettings that are configured for this site."""
 
     config = get_config(url, token)
 
@@ -158,38 +162,44 @@ def get_appsettings(
         api_instance = settings_api.SettingsApi(api_client)
         api_response = api_instance.app_settings()
     res = [response.to_dict() for response in api_response]
-    return result(res)
+    return result(res, quiet)
+
 
 @app.command()
 def put_appsettings(
-    appsetting_id, 
+    appsetting_id,
     appsetting_json,
-    url:Optional[str] = None, 
-    token:Optional[str] = None,
-    quiet:bool = False,
+    url: Optional[str] = None,
+    token: Optional[str] = None,
+    quiet: bool = False,
 ) -> Optional[dict]:
-    """Update a Appsetting. This is an administrative endpoint that is not accessible for regular users.
-    """
+    """Update a Appsetting. This is an administrative endpoint that is not accessible for regular users."""
     config = get_config(url, token)
-   
+
     info(f"Sending appsetting {appsetting_json} to server", quiet)
     with ApiClient(config) as api_client:
         api_instance = settings_api.SettingsApi(api_client)
         try:
             api_response = api_instance.update_app_settings(
                 id=appsetting_id,
-                app_settings_update_request = AppSettingsUpdateRequest(**appsetting_json)
+                app_settings_update_request=AppSettingsUpdateRequest(**appsetting_json),
             )
 
             success("Appsetting was successfully updated.")
             return result(api_response, quiet)
 
         except ApiException as e:
-            if e.status == requests.codes['bad_request']:
+            if e.status == requests.codes["bad_request"]:
                 error("The request was not valid: " + str(e), quiet)
-            if e.status == requests.codes['forbidden'] or e.status == requests.codes['unauthorized']:
+            if (
+                e.status == requests.codes["forbidden"]
+                or e.status == requests.codes["unauthorized"]
+            ):
                 error("Access forbidden: " + str(e), quiet)
-            if e.status == requests.codes['forbidden'] or e.status == requests.codes['unauthorized']:
+            if (
+                e.status == requests.codes["forbidden"]
+                or e.status == requests.codes["unauthorized"]
+            ):
                 error("Access forbidden: " + str(e), quiet)
             if e.status == 404:
                 error("Setting does not exist: " + str(e), quiet)
