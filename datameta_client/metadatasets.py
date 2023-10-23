@@ -30,11 +30,11 @@ app = typer.Typer()
 
 @app.command()
 def stage(
-    metadata_json, # dict or str
-                   # (Union type not yet supported by typer)
-    url:Optional[str] = None,
-    token:Optional[str] = None,
-    quiet:bool = False,
+    metadata_json,  # dict or str
+    # (Union type not yet supported by typer)
+    url: Optional[str] = None,
+    token: Optional[str] = None,
+    quiet: bool = False,
 ) -> dict:
     """Stage a single metadataset record.
 
@@ -48,20 +48,19 @@ def stage(
     metadata_record = get_list_or_dict_from(metadata_json)
     if isinstance(metadata_record, list):
         JsonObjectError(
-            "A list of metadata records is not allowed here." +
-            "Please only specify a single record."
+            "A list of metadata records is not allowed here."
+            + "Please only specify a single record."
         )
 
     info("Sending metadata to server", quiet)
     with ApiClient(config) as api_client:
         api_instance = metadata_api.MetadataApi(api_client)
         meta_data_set = MetaDataSet(record=metadata_record)
-        api_response = api_instance.create_meta_data_set(
-            meta_data_set=meta_data_set
-        )
+        api_response = api_instance.create_meta_data_set(meta_data_set=meta_data_set)
 
     success("Metadata record successfully staged.")
     return result(api_response.to_dict(), quiet)
+
 
 def _add_timezone(dt: Optional[datetime]):
     """Convert to UTC if not None, otherwise return None"""
@@ -69,15 +68,16 @@ def _add_timezone(dt: Optional[datetime]):
         return dt.astimezone(timezone.utc)
     return dt
 
+
 @app.command()
 def search(
-        submitted_before: Optional[datetime] = None,
-        submitted_after: Optional[datetime] = None,
-        awaiting_service: Optional[str] = None,
-        url:Optional[str] = None,
-        token:Optional[str] = None,
-        quiet:bool = False
-        ) -> List[dict]:
+    submitted_before: Optional[datetime] = None,
+    submitted_after: Optional[datetime] = None,
+    awaiting_service: Optional[str] = None,
+    url: Optional[str] = None,
+    token: Optional[str] = None,
+    quiet: bool = False,
+) -> List[dict]:
     """Query metadatasets according to search critera. If datetimes are
     specified without a timezone, they are assumed to be local time. Note that
     specifying a timezone is only possible programmatically."""
@@ -90,17 +90,37 @@ def search(
     # an arbitrary timezone. Applying `astimezone(utc)` to datetime objects
     # without a timezone annotation assumes local time.
     args = {
-            'submitted_before': _add_timezone(submitted_before),
-            'submitted_after': _add_timezone(submitted_after),
-            'awaiting_service': awaiting_service
-            }
+        "submitted_before": _add_timezone(submitted_before),
+        "submitted_after": _add_timezone(submitted_after),
+        "awaiting_service": awaiting_service,
+    }
 
-    args = { k: v for k, v in args.items() if v is not None }
+    args = {k: v for k, v in args.items() if v is not None}
 
     info("Sending query to server", quiet)
     with ApiClient(config) as api_client:
-        api_instance   = metadata_api.MetadataApi(api_client)
-        api_response   = api_instance.get_meta_data_sets(**args)
+        api_instance = metadata_api.MetadataApi(api_client)
+        api_response = api_instance.get_meta_data_sets(**args)
 
     res = [elem.to_dict() for elem in api_response]
     return result(res, quiet)
+
+
+@app.command()
+def get(
+    metadataset_id: str,
+    url: Optional[str] = None,
+    token: Optional[str] = None,
+    quiet: bool = False,
+) -> List[dict]:
+    """This is an administrative endpoint. Query a MetaDataSet by its ID."""
+
+    if metadataset_id:
+        config = get_config(url, token)
+
+        info("Sending query to server", quiet)
+        with ApiClient(config) as api_client:
+            api_instance = metadata_api.MetadataApi(api_client)
+            api_response = api_instance.get_meta_data_set(metadataset_id)
+
+        return result(api_response.to_dict(), quiet)

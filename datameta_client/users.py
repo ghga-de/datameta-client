@@ -21,22 +21,41 @@ from datameta_client_lib.api import authentication_and_users_api
 from datameta_client_lib.model.error_model import ErrorModel
 from datameta_client_lib.model.user_response import UserResponse
 
+from datameta_client_lib.api import remote_procedure_calls_api
+
 app = typer.Typer()
+
 
 @app.command()
 def get_user(
     id: str,
-    url:Optional[str]     = None,
-    token:Optional[str]   = None,
-    quiet:bool            = False,
+    url: Optional[str] = None,
+    token: Optional[str] = None,
+    quiet: bool = False,
 ) -> dict:
-
     config = get_config()
 
     with ApiClient(config) as api_client:
         # Create an instance of the API class
-        api_instance = authentication_and_users_api.AuthenticationAndUsersApi(api_client)
+        api_instance = authentication_and_users_api.AuthenticationAndUsersApi(
+            api_client
+        )
 
         # Get user information
         api_response = api_instance.user_information_request(id)
+        return result(api_response.to_dict(), quiet)
+
+
+@app.command()
+def whoami(
+    url: Optional[str] = None,
+    token: Optional[str] = None,
+    quiet: bool = False,
+) -> dict:
+    config = get_config()
+
+    with ApiClient(config) as api_client:
+        api_instance = remote_procedure_calls_api.RemoteProcedureCallsApi(api_client)
+
+        api_response = api_instance.get_user_information()
         return result(api_response.to_dict(), quiet)

@@ -4,6 +4,10 @@ from random import choice
 from string import ascii_letters, digits
 from copy import deepcopy
 
+# dependency on the package to be tested
+# probably there is a better way to initialize the test metadata
+from datameta_client import admin
+
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -51,3 +55,28 @@ files = [
     for name in os.listdir(base_dir)
     if "test_file_" in name
 ]
+
+# metadataset fixtures:
+metadatum_json_path = os.path.join(
+    base_dir,
+    "test_metadatum.json"
+)
+with open(metadatum_json_path, "r") as json_file:
+    metadatum = json.load(json_file)
+
+#
+# Initialize with example metadata
+#
+metadata_record_json_path = os.path.join(
+    base_dir,
+    "test_metadata.json"
+)
+if len(admin.get_metadata()) == 0:
+    with open(metadata_record_json_path, "r") as json_file:
+        metadata = json.load(json_file)
+        print(metadata)
+
+    for mdatum in metadata:
+        admin.post_metadatum(metadatum_json=mdatum)
+
+print(admin.get_metadata())

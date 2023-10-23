@@ -1,0 +1,14 @@
+{
+    "name": "Test",
+    "regex_description": "Anything",
+    "long_description": "This is a test metadatum",
+    "example": "This is an example",
+    "reg_exp": ".*",
+    "date_time_fmt": "string",
+    "is_mandatory": false,
+    "order": 1,
+    "is_file": false,
+    "is_submission_unique": true,
+    "is_site_unique": true,
+    "service_id": ""
+}
