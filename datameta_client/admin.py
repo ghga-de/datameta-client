@@ -16,13 +16,16 @@ import typer
 from typing import Optional, List
 
 from datameta_client_lib import ApiClient
-from datameta_client_lib.api import metadata_api, settings_api
+from datameta_client_lib.api import metadata_api, settings_api, services_api
 from datameta_client_lib.model.meta_datum import MetaDatum
+from datameta_client_lib.model.service_request import ServiceRequest
+from datameta_client_lib.model.service_update_request import ServiceUpdateRequest
 from datameta_client_lib.model.meta_data_response import MetaDataResponse
 from datameta_client_lib.model.app_settings_update_request import (
     AppSettingsUpdateRequest,
 )
 from datameta_client_lib import ApiClient, ApiException
+from .utils import get_list_or_dict_from
 
 import requests
 
@@ -208,3 +211,36 @@ def put_appsettings(
             else:
                 error("An error not related to validation occured: " + str(e), quiet)
             return result(False, quiet)
+
+@app.command()
+def put_service(
+    service_id: str,
+    service_json,
+    url: Optional[str] = None,
+    token: Optional[str] = None,
+    quiet: bool = False,
+) -> dict:
+
+    config = get_config(url, token)
+
+    service_update_request = get_list_or_dict_from(service_json)
+
+    with ApiClient(config) as api_client:
+        api_instance = services_api.ServicesApi(api_client)
+        api_response = api_instance.put_service(id=service_id, service_update_request=ServiceUpdateRequest(**service_update_request))
+    return result(api_response.to_dict(), quiet)
+
+@app.command()
+def post_service(
+    service_name: str,
+    url: Optional[str] = None,
+    token: Optional[str] = None,
+    quiet: bool = False,
+) -> dict:
+
+    config = get_config(url, token)
+
+    with ApiClient(config) as api_client:
+        api_instance = services_api.ServicesApi(api_client)
+        api_response = api_instance.post_service(service_request=ServiceRequest(service_name))
+    return result(api_response.to_dict(), quiet)
